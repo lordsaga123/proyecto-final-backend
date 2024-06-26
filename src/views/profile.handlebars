@@ -1,0 +1,39 @@
+
+
+<h1>Mi Perfil</h1>
+<div class="formLogin">
+<p>Bienvenid@!, {{user.first_name}} {{user.last_name}}!</p>
+<p>Rol: {{user.role}}</p> 
+
+<form action="/api/users/logout" method="POST">
+  <button type="submit">Logout</button>
+</form>
+
+
+{{#if this.isAdmin}}
+<div class="box-redirect">
+  <a class="nav-item nav-redirect" href="/realtimeproducts"> Modificar Productos </a>
+  <a class="nav-item nav-redirect" href="/api/users"> Apartado del Admin </a>
+</div>
+{{else}}
+  <a class="nav-item nav-redirect"  href="/chat"> Chat en vivo</a>
+  <a class="nav-item nav-redirect"  href="/products"> Tienda </a>
+
+{{/if}}
+</div>
+
+{{#if this.isAdmin}}
+  <a href="/realtimeproducts">Administrador de Productos</a>
+  <br />
+  <a href="/api/users"> Administrador de Usuarios</a>
+  <br>
+{{else}}
+  {{#if this.isPremium}}
+    <a href="/realtimeproducts">Modificar Productos</a>
+    <br />
+  {{/if}}
+  <a href="/chat">Chat en vivo</a>
+  <br />
+  <a href="/products">Tienda</a>
+  <br />
+{{/if}}
