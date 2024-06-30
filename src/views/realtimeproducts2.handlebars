@@ -1,6 +1,9 @@
 <h1>Real Time Products</h1>
 <h2>Productos actualizados en tiempo real</h2>
 
+<div class="formLogin">
+<p>Bienvenid@!, {{user.first_name}} {{user.last_name}}!</p>
+
 <div id="contenedorProductos">
     {{#each productos}}
     <div class="card">
@@ -8,46 +11,36 @@
         <p>Descripción: {{this.description}} </p>
         <p>Precio: {{this.price}} </p>
         <p>Stock: {{this.stock}} </p>
-        <p>Owner: {{this.owner}} </p>
-        {{#if (or (eq ../ownerRole 'admin') (eq ../userEmail this.owner))}}
-        <button class="delete-button" data-id="{{this._id}}">Eliminar</button>
-        {{/if}}
     </div>
     {{/each}}
 </div>
 <div class="pageContainer">
-    {{#if hasNextPage}}
-    <a href="/realtimeproducts?page={{nextPage}}"> Siguiente </a>
-    {{/if}} 
-    {{#if hasPrevPage}}
-    <a href="/realtimeproducts?page={{prevPage}}"> Anterior </a>
-    {{/if}}
+{{#if hasNextPage}}
+    <a href="/products?page={{nextPage}}"> Siguiente </a>
+{{/if}} 
+{{#if hasPrevPage}}
+    <a href="/products?page={{prevPage}}"> Anterior </a>
+{{/if}}
 
-    <p class="pageProducts">Página {{currentPage}} de {{totalPages}} </p>
+<p class="pageProducts">Pagina {{currentPage}} de {{totalPages}} </p>
 </div>
 
-{{#if (or (eq ownerRole 'admin') (eq ownerRole 'premium'))}}
 <h2>Formulario para agregar productos</h2>
 
 <form>
-    <input type="text" id="title" placeholder="Título">
-    <input type="text" id="description" placeholder="Descripción">
+    <input type="text" id="title" placeholder="Titulo">
+    <input type="text" id="description" placeholder="Descripcion">
     <input type="number" id="price" placeholder="Precio">
     <input type="text" id="img" value="Sin Imagen">
     <input type="text" id="code" placeholder="Código">
     <input type="number" id="stock" placeholder="Stock">
-    <input type="text" id="category" placeholder="Categoría">
+    <input type="text" id="category" placeholder="Categoria">
     <select id="status">
         <option value="true"> Activo </option>
         <option value="false"> Inactivo </option>
     </select>
     <button type="button" id="btnEnviar"> Enviar </button>
 </form>
-{{/if}}
 
-<script>
-    window.userRole = "{{userRole}}";
-    window.userEmail = "{{userEmail}}";
-</script>
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 <script src="js/realtime.js"></script>

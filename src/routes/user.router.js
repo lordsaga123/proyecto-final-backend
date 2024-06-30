@@ -38,7 +38,7 @@ router.post('/:uid/documents', upload.fields([{ name: 'document' }, { name: 'pro
 // Mantenimiento de Usuarios
 router.get("/", checkUserRole(['admin']), passport.authenticate('jwt', { session: false }), viewsController.renderUsers);
 
-/*router.delete("/delete_user/:uid", checkUserRole(['admin']), passport.authenticate('jwt', { session: false }), userController.deleteUser);*/
+router.delete("/delete_user/:uid", checkUserRole(['admin']), passport.authenticate('jwt', { session: false }), userController.deleteUser);
 
 router.delete("/", checkUserRole(['admin']), passport.authenticate('jwt', { session: false }), userController.deleteOldUsers);
 

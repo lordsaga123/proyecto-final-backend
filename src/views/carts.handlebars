@@ -6,8 +6,8 @@
     <div class="card-body">
             <h5 class="card-title">Producto: {{this.product.title}}</h5>
             <p class="card-text">Cantidad: {{this.quantity}}</p>
-            <p class="card-text">Precio: ${{this.product.totalPrice}}</p>
-            <p class="card-text">Dueño: ${{this.product.owner}}</p>
+            <p class="card-text">Precio: ${{this.product.price}}</p>
+            
 
 
 
@@ -43,10 +43,19 @@
         })
             .then(response => {
                 if (!response.ok) {
-                  console.log("SE ROMPIO TODOOOOO ELIMINAR DE A UNO");
-                    throw new Error('Error al eliminar el producto del carrito');
+                  console.log("SE ROMPIO TODOOOOO CARRITO");
+                    throw new Error('Error al vaciar el carrito');
                 }
-               location.reload();
+                // Mostramos la alerta de éxito cuando se vacía el carrito
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Producto eliminado delcarrito exitosamente",
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    location.reload();
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -54,7 +63,6 @@
     }
 
     function vaciarCarrito(cartId) {
-      alert("Estoy en vaciar carrito");
         fetch(`/api/carts/${cartId}`, {
             method: 'DELETE'
         })

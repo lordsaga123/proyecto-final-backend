@@ -9,6 +9,8 @@ function authMiddleware(req, res, next) {
             req.user = null;
         } else {
             req.user = user;
+            res.locals.userRole = user.role;
+            res.locals.userEmail = user.email;
         }
         next();
     })(req, res, next);

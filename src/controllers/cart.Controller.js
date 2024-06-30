@@ -40,6 +40,7 @@ class CartController {
         try {
             const { cid, pid } = req.params; // Obtener los parámetros de la URL
             const { quantity } = req.body; // Obtener el cuerpo de la solicitud
+            
             const carrito = await cartServices.agregarProductoAlCarrito(cid, pid, quantity);
             res.redirect(`/carts/${carrito._id}`);
         } catch (error) {

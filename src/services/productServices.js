@@ -10,6 +10,7 @@ class ProductServices{
         stock,
         category,
         thumbnails,
+        owner
       }) {
         try {
           if (!title || !description || !price || !code || !stock || !category) {
@@ -32,6 +33,7 @@ class ProductServices{
             category,
             status: true,
             thumbnails: thumbnails || [],
+            owner
           });
     
           await newProduct.save();
@@ -42,7 +44,7 @@ class ProductServices{
         }
       }
     
-      async getProducts({ limit = 10, page = 1, sort, query, owner } = {}) {
+      async getProducts({ limit = 10, page = 1, sort, query} = {}) {
         try {
             const skip = (page - 1) * limit;
     
@@ -51,7 +53,7 @@ class ProductServices{
             if (query) {
                 queryOptions = { category: query };
             }
-    
+            
             const sortOptions = {};
             if (sort) {
                 if (sort === 'asc' || sort === 'desc') {
@@ -133,6 +135,7 @@ class ProductServices{
       async deleteProduct(id) {
         try {
             const productoBorrado = await ProductModel.findByIdAndDelete(id);
+            
     
           if (!productoBorrado) {
             console.log("No se encontró producto para borrar de la Base de Datos");
@@ -140,8 +143,14 @@ class ProductServices{
           }
     
           console.log("Producto borrado exitosamente");
+          if(res){
+            res.status(200).send({status: "Succes", productoBorrado:productoBorrado});
+          }
         } catch (error) {
           console.log("Error al eliminar el producto indicado", error);
+          if(res){
+            res.status(401).send({status: "error", Error:"No se pudo eliminar elproducto"});
+          }
           throw error;
         }
       }

@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const { createHash, isValidPassword } = require("../utils/hashBcrypt.js");
 const UserDTO = require("../dto/user.dto.js");
 const {generateResetToken} = require("../utils/tokenReset.js");
+const ViewsController = require("../controllers/view.controller.js");
+const viewsController = new ViewsController()
 
 
 //Diccionario de Errores Personalizado

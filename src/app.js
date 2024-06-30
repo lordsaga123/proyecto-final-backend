@@ -63,9 +63,16 @@ initializePassport();
 const authMiddleware = require("./middleware/authmiddleware.js");
 app.use(authMiddleware);
 
+// Register Handlebars helpers
+const hbs = exphbs.create({
+    helpers: {
+        eq: (a, b) => a === b,
+        or: (a, b) => a || b
+    }
+});
 
 //Handlebars
-app.engine("handlebars", exphbs.engine());
+app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, 'views'));
 /*app.set("views", "./src/views");*/
@@ -80,6 +87,7 @@ app.use("/", mockingRoutes);
 app.use("/", errorsRoutes);
 
 
+//Inicio del Servidor
 const httpServer = app.listen(PUERTO, ()=> {
     console.log(`Escuchando en el Puerto ${PUERTO}`);
 })

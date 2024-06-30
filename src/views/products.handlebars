@@ -3,7 +3,6 @@
   <a href="/carts/{{cartId}}" class="ms-5">
     <i class="bi bi-cart cart-icon"></i>
   </a>
-  
 </div>
 
 <div class="contenedorCards">
@@ -13,16 +12,14 @@
     <h2>{{title}}</h2>
     <p>{{description}}</p>
     <p>Price: ${{price}}</p>
-    <p>Category: {{category}} </p>
-    <p>ID:{{id}} </p>
-    <form action="/api/carts/{{../cartId}}/product/{{this.id}}" method="POST">
-    <div class="input-group mb-3">
-                        <button type="button" class="btn btn-outline-secondary"
-                            onclick="decreaseQuantity(this)">-</button>
-                        <input type="number" class="form-control" value="1" name="quantity" id="quantityInput" readonly>
-                        <button type="button" class="btn btn-outline-secondary"
-                            onclick="increaseQuantity(this)">+</button>
-                    </div>
+    <p>Category: {{category}}</p>
+    <p>Propietario: {{owner}}</p>
+    <form action="/api/carts/{{../cartId}}/product/{{this._id}}" method="POST">
+        <div class="input-group mb-3">
+            <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity(this, {{stock}})">-</button>
+            <input type="number" class="form-control" value="1" name="quantity" id="quantityInput" readonly>
+            <button type="button" class="btn btn-outline-secondary" onclick="increaseQuantity(this, {{stock}})">+</button>
+        </div>
         <button class="btnMios" type="submit">Agregar al Carrito</button>
     </form>
 </div>
@@ -37,5 +34,25 @@
     <a href="/products?page={{prevPage}}"> Anterior </a>
 {{/if}}
 
-<p class="pageProducts">Pagina {{currentPage}} de {{totalPages}} </p>
+<p class="pageProducts">Página {{currentPage}} de {{totalPages}}</p>
 </div>
+
+<script>
+function decreaseQuantity(button, stock) {
+    const input = button.nextElementSibling;
+    let value = parseInt(input.value);
+    if (value > 1) {
+        value -= 1;
+        input.value = value;
+    }
+}
+
+function increaseQuantity(button, stock) {
+    const input = button.previousElementSibling;
+    let value = parseInt(input.value);
+    if (value < stock) {
+        value += 1;
+        input.value = value;
+    }
+}
+</script>

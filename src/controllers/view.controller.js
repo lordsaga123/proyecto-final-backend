@@ -7,7 +7,64 @@ const UserModel = require("../dao/models/user.model.js");
 const UserDTO = require("../dto/user.dto.js");
 
 class ViewsController {
+
   async renderProducts(req, res) {
+    try {
+      let criterioDeBusqueda = [];
+      const ownerRole = req.user.role;
+      const userEmail = req.user.email;
+
+      if (ownerRole === "premium") {
+        criterioDeBusqueda.push({
+          $match: {
+            owner: { $ne: userEmail }
+          }
+        });
+      } else if (ownerRole === "admin") {
+        return res.render("noProducts"); // Renderiza una vista que indique que no puede ver productos
+      }
+
+      const { page = 1, limit = 3 } = req.query;
+      const skip = (page - 1) * limit;
+
+      criterioDeBusqueda.push({
+        $skip: skip,
+      }, {
+        $limit: limit,
+      });
+
+      const productos = await ProductModel.aggregate(criterioDeBusqueda);
+      const totalProducts = await ProductModel.countDocuments(criterioDeBusqueda[0]?.['$match']);
+      const totalPages = Math.ceil(totalProducts / limit);
+
+      const hasPrevPage = page > 1;
+      const hasNextPage = page < totalPages;
+
+      let cartId = null;
+      if (req.user && req.user.cart) {
+        cartId = req.user.cart.toString();
+      }
+
+      res.render("products", {
+        productos: productos,
+        hasPrevPage,
+        hasNextPage,
+        prevPage: page > 1 ? parseInt(page) - 1 : null,
+        nextPage: page < totalPages ? parseInt(page) + 1 : null,
+        currentPage: parseInt(page),
+        totalPages,
+        cartId: req.user ? req.user.cart : null,
+      });
+    } catch (error) {
+      console.error("Error al obtener productos", error);
+      res.status(500).json({
+        status: "error",
+        error: "Error interno del servidor",
+      });
+    }
+  }
+  //********** ACA EMPIEZA renderProducts*********
+  /*async renderProducts(req, res) {
     try {
 
 
@@ -47,7 +104,7 @@ class ViewsController {
         return { id: _id, ...rest }; // Agregar el ID al objeto
       });*/
 
-      let cartId = null; // Inicializamos cartId como null
+      /*let cartId = null; // Inicializamos cartId como null
 
       // Verificamos si req.user existe y tiene la propiedad cart
       if (req.user && req.user.cart) {
@@ -71,7 +128,9 @@ class ViewsController {
         error: "Error interno del servidor",
       });
     }
-  } 
+  }*/ 
+  
+  //********** ACA TERMINA renderProducts*********
 
   async renderIndex(req, res) {
     try {
@@ -146,6 +205,61 @@ class ViewsController {
 
   // Vista a Productos en tiempo real
   async renderRealTimeProducts(req, res) {
+    try {
+        let criterioDeBusqueda = [];
+        const ownerRole = req.user.role;
+        const userEmail = req.user.email;
+
+        if (ownerRole === "premium") {
+            criterioDeBusqueda.push({
+                $match: {
+                    owner: userEmail
+                }
+            });
+        }
+
+        const { page = 1, limit = 3 } = req.query;
+        const skip = (page - 1) * limit;
+
+        criterioDeBusqueda.push({
+            $skip: skip,
+        }, {
+            $limit: limit,
+        });
+
+        const productos = await ProductModel.aggregate(criterioDeBusqueda);
+        const totalProducts = await ProductModel.countDocuments(criterioDeBusqueda.length > 0 ? criterioDeBusqueda[0]['$match'] : {});
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        const hasPrevPage = page > 1;
+        const hasNextPage = page < totalPages;
+
+        let cartId = null;
+        if (req.user && req.user.cart) {
+            cartId = req.user.cart.toString();
+        }
+
+        res.render("realtimeproducts", {
+            productos: productos,
+            hasPrevPage,
+            hasNextPage,
+            prevPage: page > 1 ? parseInt(page) - 1 : null,
+            nextPage: page < totalPages ? parseInt(page) + 1 : null,
+            currentPage: parseInt(page),
+            totalPages,
+            ownerRole,
+            userEmail
+        });
+    } catch (error) {
+        console.log("error en la vista real time", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+
+
+
+   //********** ACA EMPIEZA renderRealTimeProducts*********
+  /*async renderRealTimeProducts(req, res) {
      try {
       let criterioDeBusqueda = [];
       const owner = req.user.role;
@@ -185,7 +299,7 @@ class ViewsController {
         return { id: _id, ...rest }; // Agregar el ID al objeto
       });*/
 
-      let cartId = null; // Inicializamos cartId como null
+      /*let cartId = null; // Inicializamos cartId como null
 
       // Verificamos si req.user existe y tiene la propiedad cart
       if (req.user && req.user.cart) {
@@ -207,8 +321,8 @@ class ViewsController {
       console.log("error en la vista real time", error);
       res.status(500).json({ error: "Error interno del servidor" });
     }
-  }
-
+  }*/
+   //********** ACA TERMINA renderRealTimeProducts*********
   // Vista al Chat
   async renderChat(req, res) {
     res.render("chat");
